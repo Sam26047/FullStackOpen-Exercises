@@ -1,5 +1,52 @@
 import { useState } from 'react'
 
+const Filter = (props)=>{
+  return(
+    <p>
+      filter shown with <input value={props.filter} onChange={props.onFilterChange}/>
+    </p>
+  )
+}
+const PersonForm = (props)=>{
+  return(
+      <form onSubmit={props.addPerson}>
+        <div>
+          name: <input value={props.name} onChange={props.onNameChange}/>
+        </div>
+        <div>
+          number: <input value={props.number} onChange={props.onNumberChange} />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+  )
+}
+const Person =({person})=>{
+  return(
+    <div key={person.name}>
+      <p>
+        {person.name}<br/>
+        {person.number}
+      </p>
+    </div>  
+  )
+}
+const Persons = ({persons,filter})=>{
+  return(
+    <div>
+      {persons.map((person)=>{
+        const regex = new RegExp(`^${filter}`);
+        if(regex.test(person.name.toLowerCase())){
+          return(
+            <Person key={person.name} person={person}/>
+          )
+        }
+      })}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas',
@@ -11,7 +58,7 @@ const App = () => {
   const [filter,setFilter]  = useState('')
 
   
-  const addName = (event)=>{
+  const addPerson = (event)=>{
     event.preventDefault()
     const newPerson  ={
       name:newName,
@@ -41,33 +88,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      filter shown with <input value={filter} onChange={handleFilterChange}/>
+      <Filter filter={filter} onFilterChange={handleFilterChange}/>
       <h2>Add new</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm 
+        name={newName}
+        onNameChange={handleNameChange}
+        number={newNumber}
+        onNumberChange={handleNumberChange}
+        addPerson={addPerson}
+      />
       <h2>Numbers</h2>
-      {persons.map((person)=>{
-        const regex = new RegExp(`^${filter}`);
-        if(regex.test(person.name.toLowerCase())){
-          return(
-          <div key={person.name}>
-            <p>
-              {person.name}<br />
-              {person.number}
-            </p>
-          </div>          
-        )
-        }
-      })}
+      <Persons persons={persons} filter={filter}/>
     </div>
   )
 }
