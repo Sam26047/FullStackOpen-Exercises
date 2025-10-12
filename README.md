@@ -1,2 +1,2 @@
 # FullStackOpen-Exercises
-Exercise submission repo for full stack open UOH course
+Exercise submission repo for Full Stack Open University of Helsinki Course
