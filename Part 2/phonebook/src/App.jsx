@@ -75,6 +75,20 @@ const App = () => {
     if(persons.some((person)=>((person.name===newPerson.name)&&(person.number===newPerson.number)))){
       window.alert(`${newPerson.name} ${newPerson.number} is already added to phonebook`)
     }
+    else if(persons.some((person)=>((person.name===newPerson.name)&&(person.number!=newPerson.number)))){
+      if(window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one`)){
+        const personToUpdate = persons.find(person => person.name === newName)
+        const updatedPerson = { ...personToUpdate, number: newNumber }
+        phonebookService
+          .updateNumber(personToUpdate.id,updatedPerson)
+          .then(response=>{
+            console.log(response.data)
+            setPersons(persons.map(p => p.id !== personToUpdate.id ? p : response.data))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
+    }
     else{
       phonebookService
         .createPerson(newPerson)
