@@ -24,24 +24,26 @@ const PersonForm = (props)=>{
       </form>
   )
 }
-const Person =({person})=>{
+
+const Person =({person,handleDelete})=>{
   return(
     <div key={person.name}>
       <p>
-        {person.name}<br/>
-        {person.number}
+        {person.name} {person.number} &nbsp;
+        <button onClick={()=>handleDelete(person.id,person.name)}>delete</button>
       </p>
     </div>  
   )
 }
-const Persons = ({persons,filter})=>{
+
+const Persons = ({persons,filter,handleDelete})=>{
   return(
     <div>
       {persons.map((person)=>{
         const regex = new RegExp(`^${filter}`);
         if(regex.test(person.name.toLowerCase())){
           return(
-            <Person key={person.name} person={person}/>
+            <Person key={person.id} person={person} handleDelete={handleDelete}/>
           )
         }
       })}
@@ -75,12 +77,22 @@ const App = () => {
     }
     else{
       phonebookService
-        .create(newPerson)
+        .createPerson(newPerson)
         .then(response=>{
           console.log(response)
           setPersons(persons.concat(response.data))
           setNewName('')
           setNewNumber('')
+        })
+    }
+  }
+  const handleDelete = (id,name)=>{
+    if(window.confirm(`Delete ${name} ?`)){
+      phonebookService
+        .deletePerson(id)
+        .then(response=>{
+          console.log(response)
+          setPersons(persons.filter(p => p.id !==id))
         })
     }
   }
@@ -108,7 +120,7 @@ const App = () => {
         addPerson={addPerson}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter}/>
+      <Persons persons={persons} filter={filter} handleDelete={handleDelete}/>
     </div>
   )
 }
