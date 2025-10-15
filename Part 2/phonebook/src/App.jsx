@@ -1,5 +1,6 @@
 import { useState,useEffect } from 'react'
 import axios from 'axios'
+import './index.css'
 import phonebookService from './services/persons'
 
 const Filter = (props)=>{
@@ -51,11 +52,23 @@ const Persons = ({persons,filter,handleDelete})=>{
   )
 }
 
+const Notification = ({message})=>{
+  if(message === null){
+    return null
+  }
+  return (
+    <div className='success'>
+      {message}
+    </div>
+  )
+} 
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber,setNewNumber] = useState('')
   const [filter,setFilter]  = useState('')
+  const [successMessage,setSuccessMessage] = useState(null)
 
   const hook = ()=>{
     phonebookService
@@ -86,6 +99,13 @@ const App = () => {
             setPersons(persons.map(p => p.id !== personToUpdate.id ? p : response.data))
             setNewName('')
             setNewNumber('')
+
+          setSuccessMessage(
+            `Updated ${newPerson.name} Successfully`
+          )
+          setTimeout(()=>{
+            setSuccessMessage(null)
+          },5000)
           })
       }
     }
@@ -97,6 +117,13 @@ const App = () => {
           setPersons(persons.concat(response.data))
           setNewName('')
           setNewNumber('')
+
+          setSuccessMessage(
+            `Added ${newPerson.name} Successfully`
+          )
+          setTimeout(()=>{
+            setSuccessMessage(null)
+          },5000)
         })
     }
   }
@@ -124,6 +151,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} />
       <Filter filter={filter} onFilterChange={handleFilterChange}/>
       <h2>Add new</h2>
       <PersonForm 
