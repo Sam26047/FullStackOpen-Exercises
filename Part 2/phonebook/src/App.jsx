@@ -1,5 +1,5 @@
-import { useState } from 'react'
-
+import { useState,useEffect } from 'react'
+import axios from 'axios'
 const Filter = (props)=>{
   return(
     <p>
@@ -48,15 +48,19 @@ const Persons = ({persons,filter})=>{
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: "39-44-532532"
-    }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber,setNewNumber] = useState('')
   const [filter,setFilter]  = useState('')
 
+  const hook = ()=>{
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response=>{
+        setPersons(response.data)
+      })
+  }
+  useEffect(hook,[])
   
   const addPerson = (event)=>{
     event.preventDefault()
@@ -68,6 +72,7 @@ const App = () => {
       window.alert(`${newPerson.name} ${newPerson.number} is already added to phonebook`)
     }
     else{
+      axios.get
       setPersons(persons.concat(newPerson))
       setNewName('')
       setNewNumber('')
