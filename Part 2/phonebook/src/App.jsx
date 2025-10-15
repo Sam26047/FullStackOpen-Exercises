@@ -52,15 +52,24 @@ const Persons = ({persons,filter,handleDelete})=>{
   )
 }
 
-const Notification = ({message})=>{
-  if(message === null){
+const Notification = ({sMessage,eMessage})=>{
+  if(sMessage){
+    return (
+      <div className='success'>
+        {sMessage}
+      </div>
+    )
+  }
+  else if(eMessage){
+    return (
+      <div className='error'>
+        {eMessage}
+      </div>
+    )
+  }
+  else{
     return null
   }
-  return (
-    <div className='success'>
-      {message}
-    </div>
-  )
 } 
 
 const App = () => {
@@ -69,6 +78,7 @@ const App = () => {
   const [newNumber,setNewNumber] = useState('')
   const [filter,setFilter]  = useState('')
   const [successMessage,setSuccessMessage] = useState(null)
+  const [errorMessage,setErrorMessage] = useState(null)
 
   const hook = ()=>{
     phonebookService
@@ -100,12 +110,20 @@ const App = () => {
             setNewName('')
             setNewNumber('')
 
-          setSuccessMessage(
-            `Updated ${newPerson.name} Successfully`
-          )
-          setTimeout(()=>{
-            setSuccessMessage(null)
-          },5000)
+            setSuccessMessage(
+              `Updated ${newPerson.name} Successfully`
+            )
+            setTimeout(()=>{
+              setSuccessMessage(null)
+            },5000)
+            })
+          .catch(error=>{
+            setErrorMessage(
+              `Information on ${newPerson.name} has already been removed from server`
+            )
+            setTimeout(()=>{
+              setErrorMessage(null)
+            },5000)
           })
       }
     }
@@ -151,7 +169,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage} />
+      <Notification sMessage={successMessage} eMessage={errorMessage}/>
       <Filter filter={filter} onFilterChange={handleFilterChange}/>
       <h2>Add new</h2>
       <PersonForm 
