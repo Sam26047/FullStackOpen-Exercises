@@ -35,29 +35,32 @@ const CountryInfo=({country})=>{
   )
 }
 
-const Info = ({countries})=>{
-  if(countries.length>10){
-    return(
-      <p>
-        Too many matches,specify another filter
-      </p>
-    )
+const Info = ({ countries }) => {
+  const [selectedCountry, setSelectedCountry] = useState(null);
+
+  if (countries.length > 10) {
+    return <p>Too many matches, specify another filter</p>;
   }
-  else if(countries.length===1){
-    return <CountryInfo country={countries[0]}/>
+
+  if (countries.length === 1) {
+    return <CountryInfo country={countries[0]} />;
   }
-  else{
-    return(
-      <div>
-        {countries.map(country=>{
-          return (<div key={country}>
-            {country} &nbsp;
-          </div>)
-        })}
-      </div>
-    )
-  }
-}
+
+  return (
+    <div>
+      {countries.map(country => (
+        <div key={country}>
+          {country} &nbsp;
+          <button onClick={() => setSelectedCountry(country)}>Show</button>
+        </div>
+      ))}
+
+      {/* Conditionally render country info */}
+      {selectedCountry && <CountryInfo country={selectedCountry} />}
+    </div>
+  );
+};
+
 
 
 function App(){
