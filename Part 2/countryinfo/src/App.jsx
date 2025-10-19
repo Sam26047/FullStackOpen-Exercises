@@ -1,6 +1,41 @@
 import { useState,useEffect } from 'react'
 import axios from 'axios'
 
+const weather_api_key = import.meta.env.VITE_WEATHER_API_KEY;
+console.log(weather_api_key)
+
+const WeatherInfo = ({capital})=>{
+  const [weatherInfo,setWInfo] = useState(null)
+
+  const hook = ()=>{
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${weather_api_key}`)
+      .then(response=>{
+        const data = response.data
+        console.log(data)
+        setWInfo(data)
+      })
+      .catch(error=>{
+        setWInfo(null)
+      })
+  }
+  useEffect(hook,[capital])
+
+  if(!weatherInfo) return (
+    <div>
+      Weather info not  available for {capital}
+    </div>
+  )
+  return(
+    <div>
+      <h2>Weather in {capital}</h2>
+      <p> Temperature {weatherInfo.main.temp} Fahrenheit</p>
+      <p><img src={`https://openweathermap.org/img/wn/${weatherInfo.weather[0].icon}@2x.png`}/></p>
+      <p>Wind {weatherInfo.wind.speed} m/s</p>
+    </div>
+  )
+}
+
 const CountryInfo=({country})=>{
   const [countryInfo,setInfo] = useState(null)
 
@@ -15,7 +50,7 @@ const CountryInfo=({country})=>{
   }
   useEffect(hook,[country])
 
-  if(!countryInfo) return (<></>)
+  if(!countryInfo) return (<> </>)
   
   return(
     <div>
@@ -31,6 +66,7 @@ const CountryInfo=({country})=>{
         ))}
       </ul>
       <img src={countryInfo.flags.png} />
+      <WeatherInfo capital={countryInfo.capital[0]}/>
     </div>
   )
 }
